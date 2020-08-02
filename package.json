@@ -18,7 +18,7 @@
     "styled-components": "^2.1.0",
     "url-loader": "^0.5.9",
     "webpack": "^3.0.0",
-    "webpack-dev-server": "^2.5.0",
+    "webpack-dev-server": "^3.11.0",
     "react-simple-chatbot": "^0.2.9",
     "webpack-livereload-plugin": "^1.2.0",
     "glob": "^7.1.4"
