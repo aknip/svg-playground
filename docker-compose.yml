@@ -1,0 +1,30 @@
+# Based on article
+# https://blog.bam.tech/developper-news/dockerize-your-app-and-keep-hot-reloading
+#
+# SETUP & INSTALL:
+# docker-compose up --build
+
+# START APPLICATION:
+# docker-compose up -d
+#
+# ACCESS BOTPRESS VIA BASH:
+# docker-compose exec app bash
+# 
+
+
+version: '3'
+services:
+  app:
+    build: ./app
+    command: >
+      sh -c "cd /usr/app && node index.js"  
+    # sh -c "cd /usr/app && npm run start"
+        
+    environment:
+      - NODE_ENV=development
+    volumes: # For webpack dev server to use our local files
+      - ./app/src:/usr/app/src
+    ports:
+      - '8080:8080' # For docker to now where to redirect HMR queries
+      - '9001:9001'
+      - '35729:35729'

@@ -1,0 +1,49 @@
+docker-compose up
+
+Open in browser http://localhost:8080 
+
+
+
+# Docker
+
+ACCESS VIA BASH / INSTALL NODE MODULES
+1.
+docker-compose exec app bash
+2.
+npm install --save-dev ...
+3.
+cat package.json ... zum anschauen
+
+
+
+# Idee
+- Live Reload von statischen Files via webpack-livereload-plugin
+  https://github.com/statianzo/webpack-livereload-plugin
+- "Künstliches" einbinden aller HTML-Dateien ins Bundle, um bei Änderungen einen Webpack-Rebuild zu triggern, der wiederum 
+- Start in docker-compose per npm run start (Webpack-Deveserver) oder node index.js (Webpack-Devserver per API/Script, für Play.JS auf iPad)
+
+
+
+# webpack.config
+1.
+Einbinden aller HTML-Dateien ins Bundle
+
+const generateHTMLPlugins = () => glob.sync('src/**/*.html').map((dir) => {
+  const filename = path.basename(dir);
+  ...
+
+2.
+Aktivieren von live-reload und automatisches einfügen des "Reload-Scripts" in alle HTML-Dateien
+
+const LiveReloadPluginConfig = new LiveReloadPlugin({
+  appendScriptTag: true
+});  
+
+[ ] Alternativ? Fileloader? https://webpack.js.org/loaders/file-loader/
+
+
+
+
+
+
+
