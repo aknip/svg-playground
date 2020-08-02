@@ -1,0 +1,9 @@
+TweenMax deprecated - GSAP Migration
+
+
+- TweenMax gibt es nicht mehr, stattdessen GSAP (kleiner, schneller)
+- Alte TweenMax-API/Code läuft trotzdem noch in GSAP
+- Links zu Änderungen:
+	- https://greensock.com/tweenmax/
+  - https://greensock.com/3-migration
+
