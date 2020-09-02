@@ -32,9 +32,10 @@ body {
   position: relative;
   margin: 10% 0;
   padding: 0 50px 30px 30px;
-  border-radius: 4px;
-  box-shadow: 0 40px 50px rgba(0, 0, 0, 0.3), inset 0 -5px 5px rgba(0, 0, 0, 0.3);
-  border-top: 2px solid white;
+  /*border-radius: 4px;*/
+  /*box-shadow: 0 40px 50px rgba(0, 0, 0, 0.3), inset 0 -5px 5px rgba(0, 0, 0, 0.3);*/
+  box-shadow: 0 40px 50px rgba(0, 0, 0, 0.3);
+  /*border-top: 2px solid white;*/
   width: 850px;
   height: 500px;
   *zoom: 1;

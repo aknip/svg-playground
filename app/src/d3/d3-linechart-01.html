@@ -45,6 +45,8 @@
 
   <script>
 
+    // extend d3 to append HTML and SVG 
+    // see https://gist.github.com/biovisualize/373c6216b5634327099a
 
     d3.selection.prototype.appendHTML =
     d3.selection.enter.prototype.appendHTML = function(HTMLString) {
@@ -60,6 +62,8 @@
             .parseFromString('<svg xmlns="http://www.w3.org/2000/svg">' + SVGString + '</svg>', 'application/xml').documentElement.firstChild, true));
         });
     };
+
+    //
 
     var w = 780,
       h = 350,
@@ -169,7 +173,7 @@
         }
       });
 
-      vis.appendSVG('<circle class="circle2" cx="120" cy="120" r="120"></circle>');
+      vis.appendSVG('<circle class="circle2" cx="200" cy="200" r="50"></circle>');
     }
 
     function removeData(id) {
