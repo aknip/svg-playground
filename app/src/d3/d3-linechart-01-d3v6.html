@@ -41,25 +41,10 @@
   <!-- <script src="https://d3js.org/d3.v3.min.js"></script> -->
   <script src="d3vendor/jquery2-1-3.min.js"></script>
   <script src="d3vendor/jquery.tipsy1-0-0a.js"></script>
-  <script src="d3vendor/d3.v3.min.js"></script>
+  <script src="d3vendor/d3.v6.min.js"></script>
 
   <script>
 
-
-    d3.selection.prototype.appendHTML =
-    d3.selection.enter.prototype.appendHTML = function(HTMLString) {
-        return this.select(function() {
-            return this.appendChild(document.importNode(new DOMParser().parseFromString(HTMLString, 'text/html').body.childNodes[0], true));
-        });
-    };
-
-    d3.selection.prototype.appendSVG =
-    d3.selection.enter.prototype.appendSVG = function(SVGString) {
-        return this.select(function() {
-            return this.appendChild(document.importNode(new DOMParser()
-            .parseFromString('<svg xmlns="http://www.w3.org/2000/svg">' + SVGString + '</svg>', 'application/xml').documentElement.firstChild, true));
-        });
-    };
 
     var w = 780,
       h = 350,
@@ -67,55 +52,30 @@
       g,
       current,
       duration = 700,
-      ease = "cubic-out",
+      ease = d3.easeCubicOut; //"cubic-out", (v3)
       reset = [0,0,0,0,0,0,0,0,0,0,0,0,0];
 
     function draw(id) {
       var data = generateData(),
       other_data = generateOtherData(),
       margin = 30,
-      y = d3.scale.linear().domain([0, d3.max(data)]).range([0 + margin, h - 60]),
-      x = d3.scale.linear().domain([0, data.length]).range([0 + margin, w + 50]),
-      line = d3.svg.line()
+      y = d3.scaleLinear().domain([0, d3.max(data)]).range([0 + margin, h - 60]),
+      x = d3.scaleLinear().domain([0, data.length]).range([0 + margin, w + 50]),
+      line = d3.line()
         .x(function(d,i) { return x(i); })
         .y(function(d) { return -1 * y(d); });
         
       console.log(data);
 
       var vis = d3.select("#entity-chart").select("svg").select("g");
-      
+ 
       if (vis.empty()) {
         vis = d3.select("#entity-chart")
           .append("svg:svg")
           .attr("width", w)
           .attr("height", h);
               
-            // -- had to remove drop shadows ---
-            // -- made transitions all funky :( ---
-            // filters go in defs element
-            // var defs = vis.append("defs");
-            // 
-            // var filter = defs.append("filter")
-            //     .attr("id", "drop-shadow")
-            //     .attr("height", "135%");
-            // 
-            // filter.append("feGaussianBlur")
-            //     .attr("in", "SourceAlpha")
-            //     .attr("stdDeviation", 10)
-            //     .attr("result", "blur");
-            // 
-            // filter.append("feOffset")
-            //     .attr("in", "blur")
-            //     .attr("dx", 0)
-            //     .attr("dy", 10)
-            //     .attr("result", "offsetBlur");
-            // 
-            // var feMerge = filter.append("feMerge");
-            // 
-            // feMerge.append("feMergeNode")
-            //     .attr("in", "offsetBlur");     
-            // feMerge.append("feMergeNode")
-            //     .attr("in", "SourceGraphic");
+          
           
         g = vis.append("svg:g")
           .attr("transform", "translate(0, 350)");
@@ -136,12 +96,12 @@
           .attr("text-anchor", "middle");
       }
           
-      g.append("svg:path")
-        .attr("class", id)
-        .attr("d", line(reset))
-            // .style("filter", "url(#drop-shadow)")
-        .transition().duration(duration).ease(ease)
-        .attr("d", line(data));
+       g.append("svg:path")
+         .attr("class", id)
+         .attr("d", line(reset))
+      //       // .style("filter", "url(#drop-shadow)")
+         .transition().duration(duration).ease(ease)
+         .attr("d", line(data));
                 
       g.selectAll("dot")
         .data(data)
@@ -169,7 +129,8 @@
         }
       });
 
-      vis.appendSVG('<circle class="circle2" cx="120" cy="120" r="120"></circle>');
+     
+      
     }
 
     function removeData(id) {
@@ -231,7 +192,6 @@
       subMetricChange();
       pageInit();
     });
-    
   
   </script>  
 
