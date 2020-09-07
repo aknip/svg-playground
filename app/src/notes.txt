@@ -5,5 +5,7 @@ TweenMax deprecated - GSAP Migration
 - Alte TweenMax-API/Code läuft trotzdem noch in GSAP
 - Links zu Änderungen:
 	- https://greensock.com/tweenmax/
-  - https://greensock.com/3-migration
+  	- https://greensock.com/3-migration
 
+
+- Tip für Debouncing beim Window-Resize: https://ablesense.com/blogs/news/responsive-d3js-charts	

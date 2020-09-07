@@ -1,0 +1,272 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="robots" content="noindex">
+  <meta name="robots" content="nofollow">
+
+
+  <!-- Page Title -->
+  <title>d3</title>
+
+  <!-- Styles and Scripts -->
+  <link href="d3-template-03-styles.css" rel="stylesheet" type="text/css">
+  <script src="d3vendor/d3.v3.min.js"></script>
+  <script src="d3vendor/gsap3-4-2.min.js"></script>
+
+
+  <style type="text/css">
+    #chart {
+      position: relative;
+      margin: 100px 20%;
+      /*padding: 0 50px 30px 30px;*/
+      /*border-radius: 4px;*/
+      /*box-shadow: 0 40px 50px rgba(0, 0, 0, 0.3), inset 0 -5px 5px rgba(0, 0, 0, 0.3);*/
+      box-shadow: 0 40px 50px rgba(0, 0, 0, 0.3);
+      /*border-top: 2px solid white;*/
+      /*width: 850px;*/
+      /*height: 500px;*/
+      width: 60%;
+      *zoom: 1;
+      background-image: -webkit-gradient(left, linear, 0 0, 0 100%, from(#e7e9ec), color-stop(50%, #efefef), to(#e7e9ec));
+      background-image: -webkit-linear-gradient(left, #e7e9ec, #efefef 50%, #e7e9ec);
+      background-image: -moz-linear-gradient(left, #e7e9ec, #efefef 50%, #e7e9ec);
+      background-image: linear-gradient(to right, #e7e9ec, #efefef 50%, #e7e9ec);
+      background-repeat: no-repeat;
+    }
+
+
+    #chart circle:hover,
+    #chart circle.active {
+      stroke-width: 6px !important;
+      cursor: pointer;
+      stroke: #5f96bb !important;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div id="chart">
+  </div>
+
+  <script>
+    //////////////////////////////////////////////
+    // Data //////////////////////////////////////
+    //////////////////////////////////////////////
+    // fake data
+    var data = [
+      {year: 2000, population: 1192},
+      {year: 2001, population: 1234},
+      {year: 2002, population: 1463},
+      {year: 2003, population: 1537},
+      {year: 2004, population: 1334},
+      {year: 2005, population: 1134},
+      {year: 2006, population: 1234},
+      {year: 2007, population: 1484},
+      {year: 2008, population: 1562},
+      {year: 2009, population: 1427},
+      {year: 2010, population: 1325},
+      {year: 2011, population: 1484},
+      {year: 2012, population: 1661},
+      {year: 2013, population: 1537},
+      {year: 2014, population: 1334},
+      {year: 2015, population: 1134},
+      {year: 2016, population: 1427}
+    ];
+
+   
+
+    // Parse the date / time
+    //var parseDate = d3.timeParse("%Y");
+
+    var parseDate = d3.time.format("%Y").parse
+
+    // force types
+    function type(dataArray) {
+      dataArray.forEach(function(d) {
+        d.year = new Date(d.year);
+        d.retention = +d.population;
+      });
+      return dataArray;
+    }
+    data = type(data);
+
+    //////////////////////////////////////////////
+    // Chart Config /////////////////////////////
+    //////////////////////////////////////////////
+
+    // Set the dimensions of the canvas / graph
+    var margin = {top: 30, right: 20, bottom: 30, left: 50},
+        width, // width gets defined below
+        height = 250 - margin.top - margin.bottom;
+
+    // Set the scales ranges
+    var xScale = d3.time.scale();
+    var yScale = d3.scale.linear().range([height, 0]);
+
+    // Define the axes
+    var xAxis = d3.svg.axis().orient('bottom').scale(xScale);
+    var yAxis = d3.svg.axis().orient('left').scale(yScale);
+  
+
+    // create a line
+    var line = d3.svg.line();
+
+    // Add the svg canvas
+    var svg = d3.select("#chart")
+        .append("svg")
+        .attr("height", height + margin.top + margin.bottom);
+
+    var artboard = svg.append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // set the domain range from the data
+    xScale.domain(d3.extent(data, function(d) { return d.year; }));
+    yScale.domain([
+        d3.min(data, function(d) { return Math.floor(d.population - 200); }), 
+        d3.max(data, function(d) { return Math.floor(d.population + 200); })
+      ]);
+
+    // draw the line created above
+    var path = artboard.append("path").data([data])
+        .style("stroke", "#92b6c7")
+        .style("fill", "none")
+        .style("stroke-width", "3px");
+
+
+    var dots = artboard.selectAll("dot")
+        .data(data)
+        .enter().append("circle")
+        //.attr("class", id)
+        .style("stroke", "#5f96bb")
+        .style("fill", "#fff")
+        .style("stroke-width", "3px")
+          
+         
+
+    // Add the X Axis
+    var xAxisEl = artboard.append("g")
+        .attr("transform", "translate(0," + height + ")");
+
+    // Add the Y Axis
+    // we aren't resizing height in this demo so the yAxis stays static, we don't need to call this every resize
+    var yAxisEl = artboard.append("g")
+        .call(yAxis);
+
+    //////////////////////////////////////////////
+    // Drawing ///////////////////////////////////
+    //////////////////////////////////////////////
+    function drawChart() {
+      // reset the width
+      var container = d3.select(svg.node().parentNode); // d3.select('body')
+      width = parseInt(container.style("width"),10) - margin.left - margin.right;
+  
+      // set the svg dimensions
+      svg.attr("width", width + margin.left + margin.right);
+      
+      // Set new range for xScale
+      xScale.range([0, width]);
+      
+      // give the x axis the resized scale
+      xAxis.scale(xScale);
+      
+      // draw the new xAxis
+      xAxisEl.call(xAxis);
+      
+      // specify new properties for the line
+      line.x(function(d) { return xScale(d.year); })
+        .y(function(d) { return yScale(d.population); });
+      
+      // draw the path based on the line created above
+      path.attr('d', line);
+
+      // draw dots
+      dots.attr("cx", function(d,i) { return xScale(d.year); })
+        .attr("cy", function(d) { return yScale(d.population); })
+        .attr("title", function(d,i) { return xScale(d.year); })
+        .attr("r", 6.5);
+    }
+
+    // call this once to draw the chart initially
+    drawChart();
+
+
+    //////////////////////////////////////////////
+    // Resizing //////////////////////////////////
+    //////////////////////////////////////////////
+
+    // redraw chart on resize
+    window.addEventListener('resize', drawChart);
+
+
+
+    function enableSVGappend() {
+      // extend d3 to append HTML and SVG 
+      // see https://gist.github.com/biovisualize/373c6216b5634327099a
+
+      d3.selection.prototype.appendHTML =
+        d3.selection.enter.prototype.appendHTML = function(HTMLString) {
+          return this.select(function() {
+            return this.appendChild(document.importNode(new DOMParser().parseFromString(HTMLString, 'text/html').body.childNodes[0], true));
+          });
+        };
+
+      d3.selection.prototype.appendSVG =
+        d3.selection.enter.prototype.appendSVG = function(SVGString) {
+          return this.select(function() {
+            return this.appendChild(document.importNode(new DOMParser()
+              .parseFromString('<svg xmlns="http://www.w3.org/2000/svg">' + SVGString + '</svg>', 'application/xml').documentElement.firstChild, true));
+          });
+        };
+    }
+
+    function d3responsivefy(svg) {
+      // see https://brendansudol.com/writing/responsive-d3
+      // get container + svg aspect ratio
+      var container = d3.select(svg.node().parentNode),
+        width = parseInt(svg.style("width")),
+        height = parseInt(svg.style("height")),
+        aspect = width / height;
+
+      // add viewBox and preserveAspectRatio properties,
+      // and call resize so that svg resizes on inital page load
+      svg.attr("viewBox", "0 0 " + width + " " + height)
+        .attr("perserveAspectRatio", "xMinYMid")
+        .call(resize);
+
+      // to register multiple listeners for same event type, 
+      // you need to add namespace, i.e., 'click.foo'
+      // necessary if you call invoke this function for multiple svgs
+      // api docs: https://github.com/mbostock/d3/wiki/Selections#on
+      d3.select(window).on("resize." + container.attr("id"), resize);
+
+      // get width of container and resize svg to fit it
+      function resize() {
+        console.log('resizing...')
+        var targetWidth = parseInt(container.style("width"));
+        svg.attr("width", targetWidth);
+        svg.attr("height", Math.round(targetWidth / aspect));
+      }
+    }
+
+    function addStyle(styles) {
+      /* Create style document */
+      var css = document.createElement('style');
+      css.type = 'text/css';
+
+      if (css.styleSheet)
+        css.styleSheet.cssText = styles;
+      else
+        css.appendChild(document.createTextNode(styles));
+
+      /* Append style to the tag name */
+      document.getElementsByTagName("head")[0].appendChild(css);
+    }
+  </script>
+</body>
+
+</html>

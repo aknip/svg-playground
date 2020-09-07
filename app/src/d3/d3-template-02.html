@@ -1,0 +1,357 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="robots" content="noindex">
+  <meta name="robots" content="nofollow">
+
+
+  <!-- Page Title -->
+  <title>d3</title>
+
+  <!-- Styles and Scripts -->
+  <link href="d3-template-02-styles.css" rel="stylesheet" type="text/css">
+  <script src="d3vendor/d3.v3.min.js"></script>
+  <script src="d3vendor/gsap3-4-2.min.js"></script>
+
+
+  <style type="text/css">
+    #chart {
+      position: relative;
+      margin: 10% 20%;
+      /*padding: 0 50px 30px 30px;*/
+      /*border-radius: 4px;*/
+      /*box-shadow: 0 40px 50px rgba(0, 0, 0, 0.3), inset 0 -5px 5px rgba(0, 0, 0, 0.3);*/
+      box-shadow: 0 40px 50px rgba(0, 0, 0, 0.3);
+      /*border-top: 2px solid white;*/
+      /*width: 850px;*/
+      /*height: 500px;*/
+      width: 60%;
+      *zoom: 1;
+      background-image: -webkit-gradient(left, linear, 0 0, 0 100%, from(#e7e9ec), color-stop(50%, #efefef), to(#e7e9ec));
+      background-image: -webkit-linear-gradient(left, #e7e9ec, #efefef 50%, #e7e9ec);
+      background-image: -moz-linear-gradient(left, #e7e9ec, #efefef 50%, #e7e9ec);
+      background-image: linear-gradient(to right, #e7e9ec, #efefef 50%, #e7e9ec);
+      background-repeat: no-repeat;
+    }
+
+
+    #chart circle:hover,
+    #chart circle.active {
+      stroke-width: 6px !important;
+      cursor: pointer;
+      stroke: #5f96bb !important;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div id="chart">
+  </div>
+
+  <script>
+    var Chart = (function(window, d3) {
+
+      var svg, data, labels, x, y, xAxis, yAxis, dim, chartWrapper, line, path, margin = {}, width, height, locator;
+
+      var breakPoint = 400;
+
+      csv = [];
+      var startDate = new Date('2014-1-1');
+      var endDate = new Date('2015-1-1');
+
+      for (var i = startDate; i < endDate; startDate.setDate(startDate.getDate() + 10)) {
+        csv.push({
+          date: i.toString(),
+          value: Math.random()
+        })
+      }
+
+      labels = [{
+          x: new Date('03-15-2014'),
+          y: .17,
+          text: 'Test Label 1',
+          orient: 'right'
+        },
+        {
+          x: new Date('11-20-2014'),
+          y: .24,
+          text: 'Test Label 2',
+          orient: 'left'
+        }
+      ]
+
+      // use this to load data from CSV
+      //d3.csv('data.csv', init); //load data, then initialize chart
+
+      init(csv); //initialize chart
+
+      //called once the data is loaded
+      function init(csv) {
+        data = csv;
+
+        //initialize scales
+        xExtent = d3.extent(data, function(d, i) {
+          return new Date(d.date)
+        });
+        yExtent = d3.extent(data, function(d, i) {
+          return d.value
+        });
+        x = d3.time.scale().domain(xExtent);
+        y = d3.scale.linear().domain(yExtent);
+
+
+        //initialize svg
+        svg = d3.select('#chart')
+          .append('svg')
+          .style('pointer-events', 'none');
+
+
+        chartWrapper = svg
+          .append('g')
+          .style('pointer-events', 'all');
+
+        //initialize axis
+        xAxis = d3.svg.axis().orient('bottom');
+        yAxis = d3.svg.axis();
+
+        //the path generator for the line chart
+        line = d3.svg.line()
+          .x(function(d) {
+            return x(new Date(d.date))
+          })
+          .y(function(d) {
+            return y(d.value)
+          });
+        
+        
+        chartWrapper.selectAll(".xAxis>.tick>text")
+          .each(function(d, i){
+            d3.select(this).style("font-size","5px");
+          });
+  
+
+        path = chartWrapper.append('path')
+          .datum(data)
+          .classed('line', true)
+          .style("stroke", "#92b6c7")
+          .style("fill", "none")
+          .style("stroke-width", "3px");
+
+
+        chartWrapper.selectAll("dot")
+        .data(data)
+        .enter().append("circle")
+        //.attr("class", id)
+        .style("stroke", "#5f96bb")
+        .style("fill", "#fff")
+        .style("stroke-width", "3px")
+        .attr("r", 6.5)
+        .attr("cx", function(d) { return x(new Date(d.date)); })
+        .attr("cy", function(d) { return y(d.value); })
+
+        
+        chartWrapper.append('g')
+          .classed('x axis', true);
+
+   
+        chartWrapper.append('g')
+          .classed('y axis', true);
+
+        chartWrapper.on('touchmove', onTouchMove);
+
+        //add locator
+        locator = chartWrapper.append('circle')
+          .style('display', 'none')
+          .attr('r', 10)
+          .attr('fill', '#f00');
+
+        touchScale = d3.scale.linear();
+
+        //render the chart
+        render();
+      }
+
+      function render() {
+
+
+        //get dimensions based on window size
+        var container = d3.select(svg.node().parentNode);
+        width = parseInt(container.style("width"));
+        //width = window.innerWidth;
+
+        updateDimensions(width);
+
+        //update x and y scales to new dimensions
+        x.range([0, width]);
+        y.range([height, 0]);
+
+        touchScale.domain([0, width]).range([0, data.length - 1]).clamp(true);
+
+        //update svg elements to new dimensions
+        svg
+          .attr('width', width + margin.right + margin.left)
+          .attr('height', height + margin.top + margin.bottom);
+
+        chartWrapper
+          .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+        //update the axis and line
+        xAxis.scale(x);
+        yAxis.scale(y).orient(window.innerWidth < breakPoint ? 'right' : 'left');
+
+        if (window.innerWidth < breakPoint) {
+          xAxis.ticks(d3.time.month, 3)
+        } else {
+          xAxis.ticks(d3.time.month, 2)
+        }
+
+        svg.select('.x.axis')
+          .attr('transform', 'translate(0,' + height + ')')
+          .call(xAxis);
+
+        svg.select('.y.axis')
+          .call(yAxis);
+
+        path.attr('d', line);
+        renderLabels();
+      }
+
+
+
+      function renderLabels() {
+
+        var _labels = chartWrapper.selectAll('text.label');
+
+        if (_labels[0].length > 0) {
+          //labels already exist
+          _labels
+            .attr('x', function(d) {
+              return x(d.x)
+            })
+            .attr('y', function(d) {
+              return y(d.y)
+            })
+        } else {
+          //append labels if function is called for the first time
+          _labels
+            .data(labels)
+            .enter()
+            .append('text')
+            .classed('label', true)
+            .attr('x', function(d) {
+              return x(d.x)
+            })
+            .attr('y', function(d) {
+              return y(d.y)
+            })
+            .style('text-anchor', function(d) {
+              return d.orient == 'right' ? 'start' : 'end'
+            })
+            .text(function(d) {
+              return d.text
+            });
+        }
+      }
+
+      function updateDimensions(winWidth) {
+        margin.top = 20;
+        margin.right = winWidth < breakPoint ? 0 : 50;
+        margin.left = winWidth < breakPoint ? 0 : 50;
+        margin.bottom = 50;
+        
+        width = winWidth - margin.left - margin.right;
+        height = .7 * width;
+      }
+
+      function onTouchMove() {
+        var xPos = d3.touches(this)[0][0];
+        var d = data[~~touchScale(xPos)];
+
+        locator.attr({
+            cx: x(new Date(d.date)),
+            cy: y(d.value)
+          })
+          .style('display', 'block');
+      }
+
+      return {
+        render: render
+      }
+
+    })(window, d3);
+
+    window.addEventListener('resize', Chart.render);
+
+
+
+    function enableSVGappend() {
+      // extend d3 to append HTML and SVG 
+      // see https://gist.github.com/biovisualize/373c6216b5634327099a
+
+      d3.selection.prototype.appendHTML =
+        d3.selection.enter.prototype.appendHTML = function(HTMLString) {
+          return this.select(function() {
+            return this.appendChild(document.importNode(new DOMParser().parseFromString(HTMLString, 'text/html').body.childNodes[0], true));
+          });
+        };
+
+      d3.selection.prototype.appendSVG =
+        d3.selection.enter.prototype.appendSVG = function(SVGString) {
+          return this.select(function() {
+            return this.appendChild(document.importNode(new DOMParser()
+              .parseFromString('<svg xmlns="http://www.w3.org/2000/svg">' + SVGString + '</svg>', 'application/xml').documentElement.firstChild, true));
+          });
+        };
+    }
+
+    function d3responsivefy(svg) {
+      // see https://brendansudol.com/writing/responsive-d3
+      // get container + svg aspect ratio
+      var container = d3.select(svg.node().parentNode),
+        width = parseInt(svg.style("width")),
+        height = parseInt(svg.style("height")),
+        aspect = width / height;
+
+      // add viewBox and preserveAspectRatio properties,
+      // and call resize so that svg resizes on inital page load
+      svg.attr("viewBox", "0 0 " + width + " " + height)
+        .attr("perserveAspectRatio", "xMinYMid")
+        .call(resize);
+
+      // to register multiple listeners for same event type, 
+      // you need to add namespace, i.e., 'click.foo'
+      // necessary if you call invoke this function for multiple svgs
+      // api docs: https://github.com/mbostock/d3/wiki/Selections#on
+      d3.select(window).on("resize." + container.attr("id"), resize);
+
+      // get width of container and resize svg to fit it
+      function resize() {
+        console.log('resizing...')
+        var targetWidth = parseInt(container.style("width"));
+        svg.attr("width", targetWidth);
+        svg.attr("height", Math.round(targetWidth / aspect));
+      }
+    }
+
+    function addStyle(styles) {
+      /* Create style document */
+      var css = document.createElement('style');
+      css.type = 'text/css';
+
+      if (css.styleSheet)
+        css.styleSheet.cssText = styles;
+      else
+        css.appendChild(document.createTextNode(styles));
+
+      /* Append style to the tag name */
+      document.getElementsByTagName("head")[0].appendChild(css);
+    }
+  </script>
+</body>
+
+</html>

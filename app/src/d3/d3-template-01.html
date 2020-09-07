@@ -1,0 +1,321 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="robots" content="noindex">
+  <meta name="robots" content="nofollow">
+
+
+  <!-- Page Title -->
+  <title>d3</title>
+
+    <!-- Styles and Scripts -->
+  <link href="d3-template-01-styles.css" rel="stylesheet" type="text/css">
+  <script src="d3vendor/d3.v3.min.js"></script>
+  <script src="d3vendor/gsap3-4-2.min.js"></script> 
+
+
+  <style type="text/css">
+    #chart {
+      position: relative;
+      margin: 10% 20%;
+      /*padding: 0 50px 30px 30px;*/
+      /*border-radius: 4px;*/
+      /*box-shadow: 0 40px 50px rgba(0, 0, 0, 0.3), inset 0 -5px 5px rgba(0, 0, 0, 0.3);*/
+      box-shadow: 0 40px 50px rgba(0, 0, 0, 0.3);
+      /*border-top: 2px solid white;*/
+      /*width: 850px;*/
+      /*height: 500px;*/
+      width: 60%;
+      *zoom: 1;
+      background-image: -webkit-gradient(left, linear, 0 0, 0 100%, from(#e7e9ec), color-stop(50%, #efefef), to(#e7e9ec));
+      background-image: -webkit-linear-gradient(left, #e7e9ec, #efefef 50%, #e7e9ec);
+      background-image: -moz-linear-gradient(left, #e7e9ec, #efefef 50%, #e7e9ec);
+      background-image: linear-gradient(to right, #e7e9ec, #efefef 50%, #e7e9ec);
+      background-repeat: no-repeat;
+    }
+    #chart:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+    #chart:before {
+      content: '';
+      position: absolute;
+      z-index: 1;
+      display: block;
+      left: 0px;
+      top: 10px;
+      margin: 30px;
+      height: 280px;
+      width: 790px;
+      background-image: -webkit-gradient(left, linear, 0 0, 0 100%, from(#e7e9ec), color-stop(50%, #e0e1e3), to(#e7e9ec));
+      background-image: -webkit-linear-gradient(left, #e7e9ec, #e0e1e3 50%, #e7e9ec);
+      background-image: -moz-linear-gradient(left, #e7e9ec, #e0e1e3 50%, #e7e9ec);
+      background-image: linear-gradient(to right, #e7e9ec, #e0e1e3 50%, #e7e9ec);
+      background-repeat: no-repeat;
+    }
+    #chart:after {
+      content: '';
+      position: absolute;
+      z-index: 1;
+      display: block;
+      left: 20px;
+      top: 10px;
+      margin: 30px;
+      height: 1px;
+      width: 750px;
+      background: #d0d1d1;
+    }
+
+    svg {
+      position: relative;
+      z-index: 2;
+    }
+
+
+    #chart circle:hover,
+    #chart circle.active {
+      stroke-width: 6px!important;
+      cursor: pointer;
+      stroke: #5f96bb!important;
+    }
+  </style>
+
+
+  <script>
+
+    var w = 780,
+      h = 350,
+      vis = null,
+      g,
+      duration = 700,
+      ease = "cubic-out",
+      reset = [0,0,0,0,0,0,0,0,0,0,0,0,0];
+
+    function draw() {
+      var data = [];
+      for (var i = 0, l = 12; i < l; i++) {
+          data.push(Math.round(Math.random() * l))
+      }
+      var  margin = 30,
+      y = d3.scale.linear().domain([0, d3.max(data)]).range([0 + margin, h - 60]),
+      x = d3.scale.linear().domain([0, data.length]).range([0 + margin, w + 50]),
+      line = d3.svg.line()
+        .x(function(d,i) { return x(i); })
+        .y(function(d) { return -1 * y(d); });
+        
+      console.log(data);
+
+      var vis = d3.select("#chart").select("svg").select("g");
+      
+      vis = d3.select("#chart")
+        .append("svg:svg")
+        .attr("width", w)
+        .attr("height", h+200)
+        .call(d3responsivefy);
+
+      var backgroundSVG = '<svg id="Ebene_1"  > <style type="text/css">   .st0{fill:#D1D5D1;stroke:#000000;stroke-miterlimit:10;} </style> <rect class="st0" width="185.7" height="104.8"/> <rect x="132.3" y="84.8" width="42.4" height="11.5"/> </svg>'
+      
+      vis.appendSVG('<g class="backgroundSVG" transform="translate(0,0) scale (1.0)">' + backgroundSVG + '</g>');  
+                 
+      g = vis.append("svg:g")
+        .attr("transform", "translate(0, 350)");
+
+       
+
+      g.append("svg:line")
+        .attr("x1", x(0))
+        .attr("y1", -1 * y(0))
+        .attr("x2", x(w))
+        .attr("y2", -1 * y(0))
+        .style("stroke", "#d0d1d1")
+    
+      g.selectAll(".xLabel")
+        .data(x.ticks(12))
+        .enter().append("svg:text")
+        .attr("class", "xLabel")
+        .style("fill","#92b6c7")
+        .text(String)
+        .attr("x", function(d) { return x(d-1) })
+        .attr("y", 0)
+        .attr("text-anchor", "middle");
+          
+      g.append("svg:path")
+        //.attr("class", id)
+        .attr("d", line(reset))
+        .style("stroke", "#92b6c7")
+        .style("fill", "none")
+        .style("stroke-width", "3px")
+        .transition().duration(duration).ease(ease)
+        .attr("d", line(data));
+
+                
+      g.selectAll("dot")
+        .data(data)
+        .enter().append("circle")
+        //.attr("class", id)
+        .style("stroke", "#5f96bb")
+        .style("fill", "#fff")
+        .style("stroke-width", "3px")
+        .attr("r", 6.5)
+        .attr("cx", function(d,i) { return x(i); })
+        .attr("cy", 0)
+        .transition().duration(duration).ease(ease)
+        .attr("cy", function(d) { return -1 * y(d); })
+        .attr("title", function(d,i) { return x(i); });
+          
+
+    
+      var switchSVG_original = '<svg id="switch" viewBox="0 0 67.12 43.5"><defs><style>.cls-1{fill:#231f20;}.cls-2{fill:#615357;}</style></defs><title>switch</title><rect id="mount" class="cls-1" width="67.12" height="43.5" rx="12" ry="12"/><rect id="track" class="cls-2" x="7.18" y="9.75" width="53.16" height="24" rx="12" ry="12"/><circle id="switcher" class="cls-3" cx="15.5" cy="21.75" r="14.5"/></svg>';   
+
+      // without viewBox
+      var switchSVG = '<svg id="switch" x="0px" y="0px"  xml:space="preserve"> <style type="text/css">   .st0{fill:#9EA0A6; stroke:none}   .st1{fill:#FFFFFF;stroke:none} </style> <path id="track" class="st0" d="M12,0.1h27.3c6.6,0,12,5.4,12,12l0,0c0,6.6-5.4,12-12,12H12c-6.6,0-12-5.4-12-12l0,0  C0,5.5,5.4,0.1,12,0.1z"/> <circle id="switcher" class="st1" cx="13" cy="12.1" r="9.6"/> </svg> '  
+
+
+      var switchSVG1 = '<svg id="switch"> <defs><style>.cls-1{fill:#231f20;}.cls-2{fill:#615357;}</style></defs> <title>switch</title><rect id="mount" class="cls-1" width="67.12" height="43.5" rx="12" ry="12"/><rect id="track" class="cls-2" x="7.18" y="9.75" width="53.16" height="24" rx="12" ry="12"/><circle id="switcher" class="cls-3" cx="15.5" cy="21.75" r="14.5"/></svg>';    
+
+      var switchSVG2 = '<svg version="1.1" id="switch" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"    viewBox="0 0 67.1 43.5" style="enable-background:new 0 0 67.1 43.5;" xml:space="preserve"> <style type="text/css">   .st0{fill:#231F20;}   .st1{fill:#615357;} </style> <path id="mount" class="st0" d="M12,0h43.1c6.6,0,12,5.4,12,12v19.5c0,6.6-5.4,12-12,12H12c-6.6,0-12-5.4-12-12V12C0,5.4,5.4,0,12,0   z"/> <path id="track" class="st1" d="M19.2,9.8h29.2c6.6,0,12,5.4,12,12l0,0c0,6.6-5.4,12-12,12H19.2c-6.6,0-12-5.4-12-12l0,0  C7.2,15.1,12.6,9.8,19.2,9.8z"/> <circle id="switcher" cx="15.5" cy="21.8" r="14.5"/> </svg>'; 
+
+      vis.appendSVG('<circle class="circle2" cx="300" cy="450" r="30"></circle>');
+      vis.appendSVG('<g class="svgButton" transform="translate(0,400) scale (1.5)">' + switchSVG + '</g>');
+
+
+
+      // Animation
+
+      var buttonSVG = document.querySelector('.svgButton');
+      TweenMax.set(buttonSVG, {
+        transformOrigin: "50% 50%"
+      });
+
+      var buttonSwitcherSVG = document.querySelector('#switcher');
+      
+      var buttonTimeline = new TimelineMax({
+         repeat: 0,
+         delay: 1,
+         yoyo: !1,
+         paused: !1
+      });
+      buttonTimeline.timeScale(1.5);
+
+      buttonTimeline
+      
+      .from(buttonSVG, {
+         duration: 2,
+         y: 0,
+         ease: "power1.out"
+      }, 0) // absolute time postion 
+
+      .from(buttonSVG, {
+         duration: 2,
+         alpha: 0,
+         ease: "power1.in"
+      },0) // absolute time postion 
+
+      .from(buttonSVG, {
+         duration: 1,
+         scaleY: 0,
+         ease: "power1.out"
+      }, 1) // absolute time postion 
+
+      .to(buttonSwitcherSVG, {
+         duration: 0.5,
+         x: 26,
+         ease: "power1.out"
+      }, "-=0.5") //0.5 seconds before end of timeline (overlap)
+
+      
+      //B.play();
+    }
+
+  
+
+    function enableSVGappend() {
+      // extend d3 to append HTML and SVG 
+      // see https://gist.github.com/biovisualize/373c6216b5634327099a
+
+      d3.selection.prototype.appendHTML =
+      d3.selection.enter.prototype.appendHTML = function(HTMLString) {
+          return this.select(function() {
+              return this.appendChild(document.importNode(new DOMParser().parseFromString(HTMLString, 'text/html').body.childNodes[0], true));
+          });
+      };
+
+      d3.selection.prototype.appendSVG =
+      d3.selection.enter.prototype.appendSVG = function(SVGString) {
+          return this.select(function() {
+              return this.appendChild(document.importNode(new DOMParser()
+              .parseFromString('<svg xmlns="http://www.w3.org/2000/svg">' + SVGString + '</svg>', 'application/xml').documentElement.firstChild, true));
+          });
+      };
+    }
+
+    function d3responsivefy(svg) {
+        // see https://brendansudol.com/writing/responsive-d3
+        // get container + svg aspect ratio
+        var container = d3.select(svg.node().parentNode),
+            width = parseInt(svg.style("width")),
+            height = parseInt(svg.style("height")),
+            aspect = width / height;
+
+        // add viewBox and preserveAspectRatio properties,
+        // and call resize so that svg resizes on inital page load
+        svg.attr("viewBox", "0 0 " + width + " " + height)
+            .attr("perserveAspectRatio", "xMinYMid")
+            .call(resize);
+
+        // to register multiple listeners for same event type, 
+        // you need to add namespace, i.e., 'click.foo'
+        // necessary if you call invoke this function for multiple svgs
+        // api docs: https://github.com/mbostock/d3/wiki/Selections#on
+        d3.select(window).on("resize." + container.attr("id"), resize);
+
+        // get width of container and resize svg to fit it
+        function resize() {
+            console.log('resizing...')
+            var targetWidth = parseInt(container.style("width"));
+            svg.attr("width", targetWidth);
+            svg.attr("height", Math.round(targetWidth / aspect));
+        }
+    }
+
+    function addStyle(styles) {          
+      /* Create style document */ 
+      var css = document.createElement('style'); 
+      css.type = 'text/css'; 
+    
+      if (css.styleSheet)  
+          css.styleSheet.cssText = styles; 
+      else  
+          css.appendChild(document.createTextNode(styles)); 
+        
+      /* Append style to the tag name */ 
+      document.getElementsByTagName("head")[0].appendChild(css); 
+    } 
+
+    
+    document.addEventListener("DOMContentLoaded", function(event) { 
+      //var styles = '#chart circle:hover, #chart circle.active { stroke-width: 6px!important; cursor: pointer; stroke: #5f96bb!important; }'; 
+      //addStyle(styles)
+      enableSVGappend();
+      draw();
+    });
+
+
+     
+    
+  
+  </script>  
+
+</head>
+
+<body>    
+      <div id="chart">   
+      </div>
+</body>
+
+</html>
