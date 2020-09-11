@@ -1,0 +1,239 @@
+
+
+<!-- https://codepen.io/GreenSock/pen/qBdzqmR -->
+
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <base href="./">
+    <title>page1 - testx</title>
+    <meta property="og:title" content="page1 - testx" />
+    <meta name="twitter:title" content="page1 - testx" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <!-- Compressed Styles -->
+    <style>
+
+      .panel.align-top {
+        -webkit-box-align: start;
+                align-items: flex-start;
+      }
+
+      .panel h1 {
+        font-size: 1.8em;
+        color: white;
+        font-weight: 300;
+        margin: 0 auto;
+      }
+      .panel.description {
+        padding-bottom: 60px;
+      }
+      .panel p, .panel li {
+        color: black;
+        font-weight: 400;
+        text-align: left;
+        font-size: 0.8em;
+        line-height: 1.5em;
+        margin: 0.3em 0 1em 0;
+      }
+      .panel p strong, .panel li strong {
+        color: white;
+        font-weight: 400;
+      }
+      .panel p code, .panel li code {
+        background-color: rgba(255,255,255,0.15);
+        padding: 2px 4px;
+        border-radius: 5px;
+      }
+      .panel li {
+        margin: 0;
+      }
+      .gray {
+        background-color: #777;
+        
+      }
+      .blue {
+        background-color: #2c7ad2;
+        
+      }
+      .orange {
+        background-color: #e77614;
+       
+      }
+
+      .red {
+        background-color: #c82736;
+       
+      }
+
+      .purple {
+        background-color: #8d3dae;
+        
+      }
+      .green {
+        background-color: #28a92b;
+        
+      }
+
+      html, body {
+        margin: 0;
+        height: 100%;
+        -webkit-overflow-scrolling: touch;
+        overflow-scrolling: touch;
+        font-family: "Signika Negative", sans-serif, Arial;
+      }
+
+      .panel {
+        width: 100%;
+        height: 100%;
+        display: -webkit-box;
+        display: flex;
+        -webkit-box-pack: center;
+                justify-content: center;
+        -webkit-box-align: center;
+                align-items: center;
+        font-weight: 600;
+        font-size: 1.5em;
+        text-align: center;
+        color: white;
+        position: relative;
+        box-sizing: border-box;
+        padding: 10px;
+      }
+
+      body {
+        overflow-x: hidden;
+        overflow-y: scroll;
+      }
+
+      h1, h2, p, li {
+        max-width: 800px;
+      }
+
+      /* HEADER */
+      header {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        padding: 6px 10px 10px 10px;
+        border-bottom-right-radius: 26px;
+        z-index: 100;
+        background-color: rgba(0,0,0,0.5);
+      }
+
+      /* HEADINGS */
+      .header-section {
+        padding: 0 15px;
+        text-align: center;
+        margin: 40vh auto 50vh;
+      }
+
+      /* SCROLL DOWN */ 
+      .scroll-down {
+        position: absolute; 
+        bottom: 30px;
+        left: 50%;
+        -webkit-transform: translate(-50%, 0);
+                transform: translate(-50%, 0);
+        color: black;
+        font-weight: 400;
+        text-transform: uppercase;
+        font-size: 16px;
+        overflow: visible;
+      }
+      .scroll-down .arrow {
+        position: relative;
+        top: -4px;
+        margin: 0 auto;
+        width: 20px;
+        height: 20px;
+        background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KPHBhdGggZmlsbD0iYmxhY2siIGQ9Ik00ODMuMiwxOTIuMmMtMjAuNS0yMC41LTUzLjUtMjAuOC03My43LTAuNkwyNTcsMzQ0LjFMMTA0LjUsMTkxLjZjLTIwLjItMjAuMi01My4yLTE5LjktNzMuNywwLjYKCWMtMjAuNSwyMC41LTIwLjgsNTMuNS0wLjYsNzMuN2wxOTAsMTkwYzEwLjEsMTAuMSwyMy40LDE1LjEsMzYuOCwxNWMxMy4zLDAuMSwyNi43LTQuOSwzNi44LTE1bDE5MC0xOTAKCUM1MDMuOSwyNDUuNyw1MDMuNywyMTIuNyw0ODMuMiwxOTIuMnoiLz4KPC9zdmc+);
+        background-size: contain;
+      }
+
+        .panel {
+          position: absolute;
+        }
+
+        #container {
+          width: 100%;
+          height: 100%; 
+          position: relative;
+          overflow: hidden;
+        }
+
+        .panel.description {
+          position: relative;
+        }
+
+    </style>
+   
+     
+</head>
+
+<body class="slides scroll animated noPreload">
+
+
+  <div class="description panel blue">
+    <div><h1>Slide-in panels</h1>
+      <p>A simple animation linked to a ScrollTrigger with <code>scrub: true</code> creates a nifty effect.</p>
+      <div class="scroll-down">Scroll down<div class="arrow"></div></div>
+    </div>
+  </div>
+
+  <div id="container">
+    <section class="panel red">
+      ONE
+    </section>
+    <section class="panel orange">
+      TWO
+    </section>
+    <section class="panel purple">
+      THREE
+    </section>
+    <section class="panel green">
+      FOUR
+    </section>
+
+  </div>
+
+
+<!-- jQuery 3.5.1 -->
+<script src="slides-assets/js/jquery3-5-1.min.js"></script>
+
+<!-- Compressed Scripts -->
+<script src="slides-assets/js/slides.min.js" type="text/javascript"></script>
+<script src="d3vendor/gsap3-4-2.min.js" type="text/javascript"></script>
+<script src="d3vendor/ScrollTrigger3-4-2.min.js" type="text/javascript"></script>
+<script src="d3vendor/zdog.dist.1.1.2.js" type="text/javascript"></script>
+
+<script>
+
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.defaults({ease: "none", duration: 2});
+
+    // create a sequence that moves 3 of the panels in from different directions 
+    const tl = gsap.timeline();
+    tl.from(".orange", {xPercent: -100})
+      .from(".purple", {xPercent: 100})
+      .from(".green", {yPercent: -100});
+
+    // pin the container and link the animation to the scrollbar (scrub: true). We could easily embed this in the gsap.timeline() to shorten things a bit, but this is to show that you can create the ScrollTrigger separately if you prefer. 
+    ScrollTrigger.create({
+      animation: tl,
+      trigger: "#container",
+      start: "top top",
+      end: "+=4000", 
+      scrub: true,
+      pin: true,
+      anticipatePin: 1
+    });
+
+
+</script>
+     
+</body>
+</html>

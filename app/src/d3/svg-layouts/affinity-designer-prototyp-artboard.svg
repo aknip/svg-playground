@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 1440 900" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <rect id="ArtBoard1" x="0" y="0" width="1440" height="900" style="fill:none;"/>
+    <clipPath id="_clip1">
+        <rect id="ArtBoard11" serif:id="ArtBoard1" x="0" y="0" width="1440" height="900"/>
+    </clipPath>
+    <g clip-path="url(#_clip1)">
+        <g transform="matrix(3.45333,0,0,3.00229,-931.46,-566.294)">
+            <rect x="269.728" y="188.621" width="416.988" height="299.771" style="fill:rgb(245,105,38);"/>
+        </g>
+        <g id="Ebene1" transform="matrix(1,0,0,1,-341.522,-110.865)">
+            <rect x="410.07" y="222.413" width="314.31" height="222.576" style="fill:rgb(235,235,235);"/>
+            <rect x="846.195" y="469.494" width="236.318" height="183.046" style="fill:rgb(235,235,235);"/>
+            <g transform="matrix(1,0,0,1,-151.458,27.0505)">
+                <text x="818.397px" y="327.771px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:48px;">Ebene 1 iPad Mac wieder iPad edit</text>
+            </g>
+        </g>
+    </g>
+    <g id="ArtBoard2" transform="matrix(1,0,0,1,-1490,0)">
+        <rect x="1490" y="0" width="1440" height="900" style="fill:none;"/>
+        <clipPath id="_clip2">
+            <rect x="1490" y="0" width="1440" height="900"/>
+        </clipPath>
+        <g clip-path="url(#_clip2)">
+            <g transform="matrix(3.45333,0,0,3.00229,558.54,-566.294)">
+                <rect x="269.728" y="188.621" width="416.988" height="299.771" style="fill:rgb(39,47,92);"/>
+            </g>
+            <g id="Ebene2" transform="matrix(1,0,0,1,1738.06,189.623)">
+                <rect x="410.07" y="222.413" width="314.31" height="222.576" style="fill:rgb(255,32,0);"/>
+                <rect id="rect1" x="846.195" y="469.494" width="236.318" height="183.046" style="fill:rgb(255,0,23);"/>
+                <g transform="matrix(1,0,0,1,-47.4201,42.8182)">
+                    <text x="818.397px" y="327.771px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:48px;fill:rgb(255,0,41);">Ebene 2</text>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
